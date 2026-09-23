@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import UserCard, { User } from "@/components/user-card";
 import { UserFormDailog } from "@/components/user-form-dialog";
 import { useState } from "react";
+import { toast } from "sonner";
 
 
 
@@ -76,11 +77,12 @@ export default function UserList() {
     const addNewUser = (user: User) => {
         setUsers((prev)=> [...prev, user])
     }
-    
+
     return <div>
         <div className="w-full flex justify-end p-2 border-b border-white shadow-[0_4px_8px_-2px_rgba(255,255,255,0.35)]">
             <UserFormDailog handleCreate={addNewUser} />
         </div>
+        <Button onClick={() => toast("hello")} >Toast</Button>
         <div className="grid grid-cols-6 gap-5 p-4">
 
             {users.map((u) => <UserCard key={u.id} user={u} />)}
