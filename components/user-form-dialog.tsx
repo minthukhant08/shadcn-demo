@@ -19,31 +19,51 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { User } from "./user-card"
 import { v4 as uuidv4 } from 'uuid';
+import GlobalDialog from "./dialog"
+import { useUserStore } from "@/store/user-list-store"
+import { useGlobalDialogStore } from "@/store/dialog-store"
+import { useEffect } from "react"
 
-type UserFormDailogProp = {
-  handleCreate: (user: User) => void
-}
-export function UserFormDailog( { handleCreate } : UserFormDailogProp) {
+
+export function UserFormDailog() {
+  const { createUser, selecteduser, updateUser } = useUserStore()
+  const { setOpen } = useGlobalDialogStore()
+
   const form = useForm<z.infer<typeof userRegisterSchema>>({
     resolver: zodResolver(userRegisterSchema),
-
   })
 
-   function onSubmit(values: z.infer < typeof userRegisterSchema > ) {
-    try {
-      console.log(values);
-      handleCreate({
-        id: uuidv4(),
-        email: values.email,
-        img: values.img,
-        name: values.name,
+  useEffect(() => {
+    if (selecteduser) {
+      form.setValues({
+        email: selecteduser.email,
+        name: selecteduser.name,
+        img: selecteduser.img
       })
+    }
+  }, [selecteduser])
+
+  function onSubmit(values: z.infer<typeof userRegisterSchema>) {
+    try {
+      if (selecteduser) {
+        updateUser({
+          id: selecteduser.id,
+          email: values.email,
+          img: values.img,
+          name: values.name,
+          active: selecteduser.active
+        })
+      } else {
+        createUser({
+          id: uuidv4(),
+          email: values.email,
+          img: values.img,
+          name: values.name,
+        })
+      }
       form.reset()
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      setOpen(false)
+      toast.success("User Created");
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
@@ -51,49 +71,43 @@ export function UserFormDailog( { handleCreate } : UserFormDailogProp) {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger render={<Button variant="outline">Create</Button>}  />
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Create new user</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} >
-          <Field>
-            <FieldLabel htmlFor="name">Name</FieldLabel>
-            <Input
-              id="name"
-              placeholder="Enter name"
+    <GlobalDialog title={selecteduser ? "Edit User" : "Create User"}>
+      <form onSubmit={form.handleSubmit(onSubmit)} >
+        <Field>
+          <FieldLabel htmlFor="name">Name</FieldLabel>
+          <Input
+            id="name"
+            placeholder="Enter name"
 
-              {...form.register("name")}
-            />
+            {...form.register("name")}
+          />
 
-            <FieldError>{form.formState.errors.name?.message}</FieldError>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input
-              id="email"
-              placeholder="Enter email"
+          <FieldError>{form.formState.errors.name?.message}</FieldError>
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            placeholder="Enter email"
 
-              {...form.register("email")}
-            />
+            {...form.register("email")}
+          />
 
-            <FieldError>{form.formState.errors.email?.message}</FieldError>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="img">Image</FieldLabel>
-            <Input
-              id="img"
-              placeholder="Enter Image"
+          <FieldError>{form.formState.errors.email?.message}</FieldError>
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="img">Image</FieldLabel>
+          <Input
+            id="img"
+            placeholder="Enter Image"
 
-              {...form.register("img")}
-            />
+            {...form.register("img")}
+          />
 
-            <FieldError>{form.formState.errors.img?.message}</FieldError>
-          </Field>
-          <Button type="submit">Submit</Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+          <FieldError>{form.formState.errors.img?.message}</FieldError>
+        </Field>
+        <Button type="submit">Submit</Button>
+      </form>
+    </GlobalDialog>
   )
 }
