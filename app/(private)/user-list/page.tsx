@@ -12,6 +12,7 @@ import { toast } from "sonner";
 export default function UserList() {
     const { setOpen } = useGlobalDialogStore()
     const { users } = useUserStore()
+
     return <div>
         <div className="w-full flex justify-end p-2 border-b border-white shadow-[0_4px_8px_-2px_rgba(255,255,255,0.35)]">
             <Button onClick={() => {setOpen(true)}} >Create user</Button>
