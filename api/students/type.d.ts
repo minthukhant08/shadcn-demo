@@ -12,3 +12,4 @@ type Student = {
   updated_at: string;
 };
 
+type CreateStudentPayload = Omit<Student, 'id', 'batch_id', 'created_at', 'updated_at'>

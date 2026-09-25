@@ -25,6 +25,7 @@ export const authOptions : AuthOptions = {
             email: credentials?.email,
             image: 'sdfa',
             name: credentials?.email,
+            role: "Admin",
             accessToken: response.data.data
           }
         } catch (error) {
