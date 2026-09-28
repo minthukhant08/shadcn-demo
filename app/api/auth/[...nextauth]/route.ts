@@ -16,17 +16,15 @@ export const authOptions : AuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        console.log(credentials, "credential....")
         try {
           const response = await authAPI.login({ email: credentials?.email!, password: credentials?.password! })
-          console.log(response.data, 'login response...')
           return {
             id: 1,
-            email: credentials?.email,
+            email: response.data.data.email,
             image: 'sdfa',
-            name: credentials?.email,
-            role: "Admin",
-            accessToken: response.data.data
+            name: response.data.data.name,
+            role: response.data.data.roles,
+            accessToken: response.data.data.token
           }
         } catch (error) {
           console.log(error)

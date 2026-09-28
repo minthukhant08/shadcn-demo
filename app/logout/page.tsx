@@ -5,7 +5,7 @@ import { useEffect } from "react"
 export default function Logout(){
 
     useEffect(()=> {
-        signOut()
+        signOut( { callbackUrl: "/"})
     },[])
     return <div>Session expired. logging out...</div>
 }

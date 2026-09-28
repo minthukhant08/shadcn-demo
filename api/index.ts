@@ -24,6 +24,11 @@ authInstance.interceptors.response.use(async (response) => {
     return response
 }, (error) => {
     console.log(error.status, 'response...')
+    
+    if(error.status == 401){
+        console.log("redirect...")
+        redirect("/logout")
+    }
 })
 
 export default noAuthInstance
