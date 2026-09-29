@@ -1,4 +1,4 @@
-import LoginForm from "@/template/login";
+import LoginForm from "@/template/auth";
 
 export default function Home() {
   
